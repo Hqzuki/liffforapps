@@ -53,9 +53,8 @@
 
         $(function () {
             $('form').submit(function () {
-                const himo    = "収入";
                 const udetate = $('input[name="udetate"]').val();
-                const msg = `${himo}\n${udetate}`;
+                const msg = `収入\n${udetate}`;
                 sendText(msg);
                 return false;
             });
