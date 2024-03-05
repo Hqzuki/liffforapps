@@ -11,6 +11,12 @@
 <body>
 
     <form class="w-75 mx-auto">
+        <p class="mt-3">年月</p>
+        <div>
+            <select class="form-control w-100" name="nenngetu">
+                
+            </select>
+        </div>
         <p class="mt-3">金額</p>
         <div>
             <input class="form-control w-100 mt-1" name="udetate" required>
@@ -58,6 +64,29 @@
                 sendText(msg);
                 return false;
             });
+        });
+
+        $(function () {
+        var select = $('select[name="nenngetu"]');
+        var today = new Date();
+        var currentMonth = today.getMonth() + 1; // 今月
+        var currentYear = today.getFullYear();    // 今年
+
+        // 今月から未来の三か月分の選択肢を生成
+        for (var i = 0; i < 3; i++) {
+                var month = currentMonth + i;
+                var year = currentYear;
+                if (month > 12) {
+                    month -= 12;
+                    year++;
+                }
+                var optionText = year + "年" + month + "月";
+                var optionValue = year + "年" + month + "月"; // 年-月の形式に整形
+                select.append($('<option>', {
+                    value: optionValue,
+                    text: optionText
+                }));
+            }
         });
 
     </script>
