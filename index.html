@@ -63,7 +63,8 @@
         $(function () {
             $('form').submit(function () {
                 const udetate = $('input[name="udetate"]').val();
-                const msg = '収入\n' + udetate;
+                const nenngetu = $('select[name="nenngetu"]').val();
+                const msg = nenngetu + '収入\n' + udetate + '円';
                 sendText(msg);
                 return false;
             });
