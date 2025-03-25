@@ -3,18 +3,34 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>家計簿管理</title>　
+    <title>家計簿管理</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rossorigin="anonymous">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.min.css">
 </head>
 <body>
 
-    <form class="w-75 mx-auto">
+    <form class="w-75 mx-auto">　
         <p class="mt-3">年月</p>
         <div>
             <select class="form-control w-100" name="nenngetu">
                 
+            </select>
+        </div>
+        <p class="mt-3">費目</p>
+        <div>
+            <select class="form-control w-100" name="himo">
+                <option value="病院">病院</option>
+                <option value="娯楽">娯楽</option>
+                <option value="雑貨・服・美容">雑貨・服・美容</option>
+                <option value="日用品">日用品</option>
+                <option value="楽天ペイ">楽天ペイ</option>
+                <option value="交通費">交通費</option>
+                <option value="車・バイク">車・バイク</option>
+                <option value="サブスク">サブスク</option>
+                <option value="ガソリン">ガソリン</option>
+                <option value="口座臨時出費">口座臨時出費</option>
+                <option value="口座臨時預金">口座臨時預金</option>
             </select>
         </div>
         <p class="mt-3">金額</p>
@@ -23,6 +39,10 @@
             <div class="input-group-append">
                 <span class="input-group-text">円</span>
             </div>
+        </div>
+        <p class="mt-3">メモ</p>
+        <div>
+            <input class="form-control w-100" name="memo">
         </div>
         <input type="submit" class="mt-4 btn btn-primary" value="送信">
     </form>
@@ -33,9 +53,31 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" crossorigin="anonymous"></script>
     <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
     <script>
+        $(function () {
+        var select = $('select[name="nenngetu"]');
+        var today = new Date();
+        var currentMonth = today.getMonth() + 1; // 今月
+        var currentYear = today.getFullYear();    // 今年
+
+        // 今月から未来の三か月分の選択肢を生成
+        for (var i = 0; i < 3; i++) {
+                var month = currentMonth + i;
+                var year = currentYear;
+                if (month > 12) {
+                    month -= 12;
+                    year++;
+                }
+                var optionText = year + "年" + month + "月";
+                var optionValue = year + "年" + month + "月"; // 年-月の形式に整形
+                select.append($('<option>', {
+                    value: optionValue,
+                    text: optionText
+                }));
+            }
+        });
 
         $(document).ready(function () {
-            const liffId = "2003899256-PBMA9YXX";
+            const liffId = "2003734685-YB7Q5GMR";
             initializeLiff(liffId);
         })
 
@@ -62,36 +104,16 @@
 
         $(function () {
             $('form').submit(function () {
+                const nenngetu    = $('select[name="nenngetu"]').val();
+                const himo    = $('select[name="himo"]').val();
                 const udetate = $('input[name="udetate"]').val();
-                const nenngetu = $('select[name="nenngetu"]').val();
-                const msg = nenngetu + '\n' + '収入\n' + udetate + '円';
+                const memo = $('input[name="memo"]').val();
+                const msg = `${nenngetu}\n${himo}\n${udetate}円\n${memo}`;
                 sendText(msg);
                 return false;
             });
         });
 
-        $(function () {
-        var select = $('select[name="nenngetu"]');
-        var today = new Date();
-        var currentMonth = today.getMonth() + 1; // 今月
-        var currentYear = today.getFullYear();    // 今年
-
-        // 今月から未来の三か月分の選択肢を生成
-        for (var i = 0; i < 3; i++) {
-                var month = currentMonth + i;
-                var year = currentYear;
-                if (month > 12) {
-                    month -= 12;
-                    year++;
-                }
-                var optionText = year + "年" + month + "月";
-                var optionValue = year + "年" + month + "月"; // 年-月の形式に整形
-                select.append($('<option>', {
-                    value: optionValue,
-                    text: optionText
-                }));
-            }
-        });
 
     </script>
 
