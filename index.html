@@ -4,28 +4,25 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>家計簿管理</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" crossorigin="anonymous">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.min.css">
 </head>
 <body>
 
     <form class="w-75 mx-auto">　
-        <p class="mt-3">年月</p>
-        <div class="row">
-            <div class="col-4">
-                <select class="form-control w-100" name="year">
-                    <!-- 年を追加 -->
-                </select>
-            </div>
-            <div class="col-4">
-                <select class="form-control w-100" name="month">
-                    <!-- 月を追加 -->
-                </select>
-            </div>
-            </div>
+        <p class="mt-3">年</p>
+        <div>
+            <select class="form-control w-100" name="year">
+                <!-- 年の選択肢がここに入る -->
+            </select>
         </div>
-
+        <p class="mt-3">月</p>
+        <div>
+            <select class="form-control w-100" name="month">
+                <!-- 月の選択肢がここに入る -->
+            </select>
+        </div>
         <p class="mt-3">費目</p>
         <div>
             <select class="form-control w-100" name="himo">
@@ -64,35 +61,30 @@
         $(function () {
             var yearSelect = $('select[name="year"]');
             var monthSelect = $('select[name="month"]');
-            var daySelect = $('select[name="day"]');
             var today = new Date();
-            var currentYear = today.getFullYear();    // 今年
             var currentMonth = today.getMonth() + 1; // 今月
+            var currentYear = today.getFullYear();    // 今年
 
-            // 年の選択肢を作成
-            for (var i = currentYear - 5; i <= currentYear + 5; i++) {
+            // 年の選択肢を生成（今年から未来5年分）
+            for (var i = 0; i < 6; i++) {
+                var year = currentYear + i;
                 yearSelect.append($('<option>', {
-                    value: i,
-                    text: i + "年"
+                    value: year,
+                    text: year + '年'
                 }));
             }
+
             yearSelect.val(currentYear); // 現在の年をデフォルト選択
 
-            // 月の選択肢を作成
-            for (var i = 1; i <= 12; i++) {
+            // 月の選択肢を生成
+            for (var j = 1; j <= 12; j++) {
                 monthSelect.append($('<option>', {
-                    value: i,
-                    text: i + "月"
+                    value: j,
+                    text: j + '月'
                 }));
             }
+
             monthSelect.val(currentMonth); // 現在の月をデフォルト選択
-
-            // 年や月が変更された場合に日付を更新
-            yearSelect.change(updateDays);
-            monthSelect.change(updateDays);
-
-            // 初期化
-            updateDays();
         });
 
         $(document).ready(function () {
@@ -128,7 +120,7 @@
                 const himo    = $('select[name="himo"]').val();
                 const udetate = $('input[name="udetate"]').val();
                 const memo = $('input[name="memo"]').val();
-                const msg = `${year}年${month}月${day}日\n${himo}\n${udetate}円\n${memo}`;
+                const msg = `${year}年${month}月\n${himo}\n${udetate}円\n${memo}`;
                 sendText(msg);
                 return false;
             });
