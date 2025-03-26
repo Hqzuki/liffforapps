@@ -11,7 +11,7 @@
 <body>
 
     <form class="w-75 mx-auto">　
-        <p class="mt-3">年月日</p>
+        <p class="mt-3">年月</p>
         <div class="row">
             <div class="col-4">
                 <select class="form-control w-100" name="year">
@@ -23,10 +23,6 @@
                     <!-- 月を追加 -->
                 </select>
             </div>
-            <div class="col-4">
-                <select class="form-control w-100" name="day">
-                    <!-- 日を追加 -->
-                </select>
             </div>
         </div>
 
@@ -72,7 +68,6 @@
             var today = new Date();
             var currentYear = today.getFullYear();    // 今年
             var currentMonth = today.getMonth() + 1; // 今月
-            var currentDay = today.getDate();        // 今日
 
             // 年の選択肢を作成
             for (var i = currentYear - 5; i <= currentYear + 5; i++) {
@@ -91,22 +86,6 @@
                 }));
             }
             monthSelect.val(currentMonth); // 現在の月をデフォルト選択
-
-            // 日の選択肢を作成
-            function updateDays() {
-                daySelect.empty();
-                var selectedYear = parseInt(yearSelect.val());
-                var selectedMonth = parseInt(monthSelect.val());
-                var daysInMonth = new Date(selectedYear, selectedMonth, 0).getDate();
-
-                for (var i = 1; i <= daysInMonth; i++) {
-                    daySelect.append($('<option>', {
-                        value: i,
-                        text: i + "日"
-                    }));
-                }
-                daySelect.val(currentDay); // 今日の日をデフォルト選択
-            }
 
             // 年や月が変更された場合に日付を更新
             yearSelect.change(updateDays);
@@ -146,7 +125,6 @@
             $('form').submit(function () {
                 const year    = $('select[name="year"]').val();
                 const month    = $('select[name="month"]').val();
-                const day = $('select[name="day"]').val();
                 const himo    = $('select[name="himo"]').val();
                 const udetate = $('input[name="udetate"]').val();
                 const memo = $('input[name="memo"]').val();
