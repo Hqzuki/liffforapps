@@ -82,20 +82,17 @@
 
             monthSelect.val(currentMonth + 1); // 来月をデフォルト選択
 
-            // スプレッドシートから費目データを取得してセレクトボックスに反映
-            const SHEET_ID = "1cqSRJ5vatRiTkro0ydSr1akOtSI_5yqpEFsSPb83Yak";
-            const spreadSheet = SpreadsheetApp.openById(SHEET_ID);
-            const targetSheet = spreadSheet.getSheetByName(new Date().getFullYear().toString());  
-            var values = targetSheet.getRange("A2:A31").getValues(); // A2:A31の費目データ
-
-            // 費目の選択肢を作成
-            var himoOptions = [];
-            for (var i = 0; i < values.length; i++) {
-                var himoValue = values[i][0];
-                if (himoValue) {
-                    himoOptions.push(himoValue);
-                }
-            }
+            // Google Apps Scriptの関数を呼び出して費目データを取得
+            google.script.run.withSuccessHandler(function(himoList) {
+                // 費目の選択肢を作成
+                himoList.forEach(function(himoValue) {
+                    himoSelect.append($('<option>', {
+                        value: himoValue,
+                        text: himoValue
+                    }));
+                });
+            }).getHimoList();
+        });
 
             // セレクトボックスにオプションを追加
             for (var i = 0; i < himoOptions.length; i++) {
