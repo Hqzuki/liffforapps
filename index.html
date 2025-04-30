@@ -87,7 +87,16 @@
             initializeLiff(liffId);
 
             // Google Apps Scriptから費目リストを取得してselect要素を更新
-            fetch('https://script.google.com/macros/s/AKfycbwho4y9TFHAmMfcR1ZKr3nsy2jNKvquZDkGZwr4fIpHevSsv1bGZ3BR15CObdcGGcZG/exec')
+            const url = "https://script.google.com/macros/s/AKfycbwho4y9TFHAmMfcR1ZKr3nsy2jNKvquZDkGZwr4fIpHevSsv1bGZ3BR15CObdcGGcZG/exec";
+            const requestParams = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/x-www-form-urlencoded",
+                      },
+            };
+            
+            fetch(url, requestParams)
                 .then(response => response.json())
                 .then(data => {
                     const himoSelect = $('select[name="himo"]');
