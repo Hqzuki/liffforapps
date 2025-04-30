@@ -28,14 +28,7 @@
         <p class="mt-3">費目</p>
         <div>
             <select class="form-control w-100" name="himo">
-                <option value="娯楽">娯楽</option>
-                <option value="雑貨・服・美容">雑貨・服・美容</option>
-                <option value="日用品">日用品</option>
-                <option value="楽天ペイ">楽天ペイ</option>
-                <option value="交通費">交通費</option>
-                <option value="車・バイク">車・バイク</option>
-                <option value="サブスク">サブスク</option>
-                <option value="ガソリン">ガソリン</option>
+                <!-- スプレッドシートから動的に費目が追加されます -->
             </select>
         </div>
         
@@ -63,6 +56,7 @@
         $(function () {
             var yearSelect = $('select[name="year"]');
             var monthSelect = $('select[name="month"]');
+            var himoSelect = $('select[name="himo"]');
             var today = new Date();
             var currentMonth = today.getMonth() + 1; // 今月
             var currentYear = today.getFullYear();    // 今年
@@ -86,13 +80,40 @@
                 }));
             }
 
-            monthSelect.val(currentMonth + 1); // 現在の月をデフォルト選択
+            monthSelect.val(currentMonth); // 現在の月をデフォルト選択
+
+            // スプレッドシートから費目データを取得してセレクトボックスに反映
+            const SHEET_ID = "1QfdthujdSmMt165FOmp0gX3TGLiZx9zhOtclPV3J4jk";
+            const spreadSheet = SpreadsheetApp.openById(SHEET_ID);
+            const targetSheet = spreadSheet.getSheetByName(currentYear.toString());
+            var values = targetSheet.getRange("A2:A31").getValues(); // A2:A31の費目データ
+
+            // 費目の選択肢を作成
+            var himoOptions = [];
+            for (var i = 0; i < values.length; i++) {
+                var himoValue = values[i][0];
+                if (himoValue) {
+                    himoOptions.push(himoValue);
+                }
+            }
+
+            // セレクトボックスにオプションを追加
+            for (var i = 0; i < himoOptions.length; i++) {
+                himoSelect.append($('<option>', {
+                    value: himoOptions[i],
+                    text: himoOptions[i]
+                }));
+            }
+
+            // デフォルトで最初の選択肢を選ぶ
+            himoSelect.val(himoOptions[0]);
+
         });
 
         $(document).ready(function () {
             const liffId = "2003899256-PBMA9YXX";
             initializeLiff(liffId);
-        })
+        });
 
         function initializeLiff(liffId) {
             liff.init({
@@ -117,9 +138,9 @@
 
         $(function () {
             $('form').submit(function () {
-                const year    = $('select[name="year"]').val();
-                const month    = $('select[name="month"]').val();
-                const himo    = $('select[name="himo"]').val();
+                const year = $('select[name="year"]').val();
+                const month = $('select[name="month"]').val();
+                const himo = $('select[name="himo"]').val();
                 const udetate = $('input[name="udetate"]').val();
                 const memo = $('input[name="memo"]').val();
                 const msg = `${year}年${month}月\n${himo}\n${udetate}円\n${memo}`;
