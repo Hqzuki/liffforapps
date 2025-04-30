@@ -83,15 +83,15 @@
             monthSelect.val(currentMonth + 1); // 来月をデフォルト選択
 
             // Google Apps Scriptの関数を呼び出して費目データを取得
-            google.script.run.withSuccessHandler(function(himoList) {
+            google.script.run.withSuccessHandler(function(himokuList) {
                 // 費目の選択肢を作成
-                himoList.forEach(function(himoValue) {
-                    himoSelect.append($('<option>', {
-                        value: himoValue,
-                        text: himoValue
+                himokuList.forEach(function(himokuValue) {
+                    himokuSelect.append($('<option>', {
+                        value: himokuValue,
+                        text: himokuValue
                     }));
                 });
-            }).getHimoList();
+            }).getHimokuList();
         });
 
             // セレクトボックスにオプションを追加
