@@ -94,19 +94,6 @@
             }).getHimokuList();
         });
 
-            // セレクトボックスにオプションを追加
-            for (var i = 0; i < himoOptions.length; i++) {
-                himoSelect.append($('<option>', {
-                    value: himoOptions[i],
-                    text: himoOptions[i]
-                }));
-            }
-
-            // デフォルトで最初の選択肢を選ぶ
-            himoSelect.val(himoOptions[0]);
-
-        });
-
         $(document).ready(function () {
             const liffId = "2003899256-PBMA9YXX";
             initializeLiff(liffId);
