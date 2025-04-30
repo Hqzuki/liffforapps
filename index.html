@@ -85,7 +85,23 @@
         $(document).ready(function () {
             const liffId = "2003899256-PBMA9YXX";
             initializeLiff(liffId);
-        })
+
+            // Google Apps Scriptから費目リストを取得してselect要素を更新
+            fetch('https://script.google.com/macros/s/AKfycbwho4y9TFHAmMfcR1ZKr3nsy2jNKvquZDkGZwr4fIpHevSsv1bGZ3BR15CObdcGGcZG/exec')
+                .then(response => response.json())
+                .then(data => {
+                    const himoSelect = $('select[name="himo"]');
+                    data.forEach(himo => {
+                        himoSelect.append($('<option>', {
+                            value: himo,
+                            text: himo
+                        }));
+                    });
+                })
+                .catch(error => {
+                    console.error('費目リストの取得に失敗しました:', error);
+                });
+        });
 
         function initializeLiff(liffId) {
             liff.init({
@@ -107,17 +123,6 @@
                 window.alert('Failed to send message ' + error);
             });
         }
-
-        // Google Apps Scriptから費目リストを取得
-        google.script.run.withSuccessHandler(function(himoList) {
-            var himoSelect = $('select[name="himo"]');
-            himoList.forEach(function(himoValue) {
-                himoSelect.append($('<option>', {
-                    value: himoValue,
-                    text: himoValue
-                }));
-            });
-        }).getHimoList();  // Apps Scriptの関数名
 
         $(function () {
             $('form').submit(function () {
