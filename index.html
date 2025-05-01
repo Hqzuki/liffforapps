@@ -89,11 +89,11 @@
             // Google Apps Scriptから費目リストを取得してselect要素を更新
             const url = "https://script.google.com/macros/s/AKfycbzzVKYEbfo3N8IbPviYcK3OGTq3mihLLmL5B-VRGIx7AvAUsfJsd1-YEZFQ1S8MVAuVdw/exec";
             const requestParams = {
-            method: "GET",
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/x-www-form-urlencoded",
-                      },
+                method: "GET",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
             };
             
             fetch(url, requestParams)
@@ -106,6 +106,12 @@
                             text: himo
                         }));
                     });
+
+                    // 「収入」を最後に追加
+                    himoSelect.append($('<option>', {
+                        value: '収入',
+                        text: '収入'
+                    }));
                 })
                 .catch(error => {
                     console.error('費目リストの取得に失敗しました:', error);
@@ -136,10 +142,10 @@
         $(function () {
             $('form').submit(function () {
                 const year    = $('select[name="year"]').val();
-                const month    = $('select[name="month"]').val();
+                const month   = $('select[name="month"]').val();
                 const himo    = $('select[name="himo"]').val();
                 const udetate = $('input[name="udetate"]').val();
-                const memo = $('input[name="memo"]').val();
+                const memo    = $('input[name="memo"]').val();
                 const msg = `${year}年${month}月\n${himo}\n${udetate}円\n${memo}`;
                 sendText(msg);
                 return false;
