@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>家計簿管理</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" crossorigin="anonymous">
@@ -10,148 +10,118 @@
 </head>
 <body>
 
-    <form class="w-75 mx-auto">  
-        <p class="mt-3">年月</p>
-        <div class="form-row">
-            <div class="col">
-                <select class="form-control" name="year">
-                    <!-- 年の選択肢がここに入る -->
-                </select>
-            </div>
-            <div class="col">
-                <select class="form-control" name="month">
-                    <!-- 月の選択肢がここに入る -->
-                </select>
-            </div>
+<form class="w-75 mx-auto">  
+    <p class="mt-3">年月</p>
+    <div class="form-row">
+        <div class="col">
+            <select class="form-control" name="year"></select>
         </div>
-        
-        <p class="mt-3">費目</p>
-        <div>
-            <select class="form-control w-100" name="himo">
-                <!-- Google Apps Scriptから費目が入ります -->
-            </select>
+        <div class="col">
+            <select class="form-control" name="month"></select>
         </div>
-        
-        <p class="mt-3">金額</p>
-        <div class="input-group">
-            <input class="form-control w-100" name="udetate" required>
-            <div class="input-group-append">
-                <span class="input-group-text">円</span>
-            </div>
+    </div>
+    
+    <p class="mt-3">費目</p>
+    <div>
+        <select class="form-control w-100" name="himo"></select>
+    </div>
+    
+    <p class="mt-3">金額</p>
+    <div class="input-group">
+        <input class="form-control w-100" name="udetate" required>
+        <div class="input-group-append">
+            <span class="input-group-text">円</span>
         </div>
-        
-        <p class="mt-3">メモ</p>
-        <div>
-            <input class="form-control w-100" name="memo">
-        </div>
-        <input type="submit" class="mt-4 btn btn-primary" value="送信">
-    </form>
+    </div>
+    
+    <p class="mt-3">メモ</p>
+    <div>
+        <input class="form-control w-100" name="memo">
+    </div>
+    <input type="submit" class="mt-4 btn btn-primary" value="送信">
+</form>
 
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" crossorigin="anonymous"></script>
-    <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
-    <script>
-        $(function () {
-            var yearSelect = $('select[name="year"]');
-            var monthSelect = $('select[name="month"]');
-            var today = new Date();
-            var currentMonth = today.getMonth() + 1; // 今月
-            var currentYear = today.getFullYear();    // 今年
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" crossorigin="anonymous"></script>
+<script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
 
-            // 年の選択肢を生成（今年から未来5年分）
-            for (var i = 0; i < 6; i++) {
-                var year = currentYear + i;
-                yearSelect.append($('<option>', {
-                    value: year,
-                    text: year + '年'
-                }));
-            }
+<script>
+$(function () {
+    const yearSelect = $('select[name="year"]');
+    const monthSelect = $('select[name="month"]');
+    const himoSelect = $('select[name="himo"]');
+    const today = new Date();
+    const currentYear = today.getFullYear();
+    const currentMonth = today.getMonth() + 1;
 
-            yearSelect.val(currentYear); // 現在の年をデフォルト選択
+    // 年の選択肢生成（今年〜5年後）
+    let yearOptions = '';
+    for (let i = 0; i < 6; i++) {
+        const year = currentYear + i;
+        yearOptions += `<option value="${year}">${year}年</option>`;
+    }
+    yearSelect.html(yearOptions).val(currentYear);
 
-            // 月の選択肢を生成
-            for (var j = 1; j <= 12; j++) {
-                monthSelect.append($('<option>', {
-                    value: j,
-                    text: j + '月'
-                }));
-            }
+    // 月の選択肢生成
+    let monthOptions = '';
+    for (let i = 1; i <= 12; i++) {
+        monthOptions += `<option value="${i}">${i}月</option>`;
+    }
+    monthSelect.html(monthOptions).val(currentMonth + 1);
 
-            monthSelect.val(currentMonth + 1); // 来月をデフォルト選択
+    // LIFF初期化
+    const liffId = "2003899256-PBMA9YXX";
+    liff.init({ liffId })
+        .then(() => {
+            // LIFF 初期化成功
+        })
+        .catch((err) => {
+            console.error("LIFF初期化失敗:", err);
         });
 
-        $(document).ready(function () {
-            const liffId = "2003899256-PBMA9YXX";
-            initializeLiff(liffId);
-
-            // Google Apps Scriptから費目リストを取得してselect要素を更新
-            const url = "https://script.google.com/macros/s/AKfycbzzVKYEbfo3N8IbPviYcK3OGTq3mihLLmL5B-VRGIx7AvAUsfJsd1-YEZFQ1S8MVAuVdw/exec";
-            const requestParams = {
-                method: "GET",
-                headers: {
-                    "Accept": "application/json",
-                    "Content-Type": "application/x-www-form-urlencoded",
-                },
-            };
-            
-            fetch(url, requestParams)
-                .then(response => response.json())
-                .then(data => {
-                    const himoSelect = $('select[name="himo"]');
-                    data.forEach(himo => {
-                        himoSelect.append($('<option>', {
-                            value: himo,
-                            text: himo
-                        }));
-                    });
-
-                    // 「収入」を最後に追加
-                    himoSelect.append($('<option>', {
-                        value: '収入',
-                        text: '収入'
-                    }));
-                })
-                .catch(error => {
-                    console.error('費目リストの取得に失敗しました:', error);
-                });
+    // 費目データ取得
+    const url = "https://script.google.com/macros/s/AKfycbzzVKYEbfo3N8IbPviYcK3OGTq3mihLLmL5B-VRGIx7AvAUsfJsd1-YEZFQ1S8MVAuVdw/exec";
+    fetch(url)
+        .then(res => res.json())
+        .then(data => {
+            let options = '';
+            data.forEach(himo => {
+                options += `<option value="${himo}">${himo}</option>`;
+            });
+            options += `<option value="収入">収入</option>`;
+            himoSelect.html(options);
+        })
+        .catch(err => {
+            console.error("費目取得失敗:", err);
         });
 
-        function initializeLiff(liffId) {
-            liff.init({
-                liffId: liffId
-            }).then(() => {
-                initializeApp();
-            }).catch((err) => {
-                console.log('LIFF Initialization failed ', err);
-            });
-        }
+    // フォーム送信処理
+    $('form').submit(function () {
+        const year = yearSelect.val();
+        const month = monthSelect.val();
+        const himo = himoSelect.val();
+        const udetate = $('input[name="udetate"]').val();
+        const memo = $('input[name="memo"]').val();
+        const msg = `${year}年${month}月\n${himo}\n${udetate}円\n${memo}`;
+        sendText(msg);
+        return false;
+    });
 
-        function sendText(text) {
-            liff.sendMessages([{
-                'type': 'text',
-                'text': text
-            }]).then(function () {
-                liff.closeWindow();
-            }).catch(function (error) {
-                window.alert('Failed to send message ' + error);
-            });
-        }
-
-        $(function () {
-            $('form').submit(function () {
-                const year    = $('select[name="year"]').val();
-                const month   = $('select[name="month"]').val();
-                const himo    = $('select[name="himo"]').val();
-                const udetate = $('input[name="udetate"]').val();
-                const memo    = $('input[name="memo"]').val();
-                const msg = `${year}年${month}月\n${himo}\n${udetate}円\n${memo}`;
-                sendText(msg);
-                return false;
-            });
+    // LINEメッセージ送信
+    function sendText(text) {
+        liff.sendMessages([{
+            type: 'text',
+            text: text
+        }]).then(() => {
+            liff.closeWindow();
+        }).catch((error) => {
+            alert('送信失敗: ' + error);
         });
-    </script>
+    }
+});
+</script>
 
 </body>
 </html>
