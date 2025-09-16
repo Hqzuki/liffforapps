@@ -47,8 +47,7 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" crossorigin="anonymous"></script>
 <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
 
-<script>
-$(function () {
+<script>$(function () {
     const yearSelect = $('select[name="year"]');
     const monthSelect = $('select[name="month"]');
     const himoSelect = $('select[name="himo"]');
@@ -71,6 +70,32 @@ $(function () {
     }
     monthSelect.html(monthOptions).val(currentMonth + 1);
 
+    // ===== 👇 ここで関数化 =====
+    function fetchHimoList() {
+        const url = "https://script.google.com/macros/s/AKfycbzzVKYEbfo3N8IbPviYcK3OGTq3mihLLmL5B-VRGIx7AvAUsfJsd1-YEZFQ1S8MVAuVdw/exec";
+        fetch(url)
+            .then(res => res.json())
+            .then(data => {
+                let options = '';
+                data.forEach(himo => {
+                    options += `<option value="${himo}">${himo}</option>`;
+                });
+                options += `<option value="収入">収入</option>`;
+                himoSelect.html(options);
+            })
+            .catch(err => {
+                console.error("費目取得失敗:", err);
+            });
+    }
+
+    // 初回の費目取得
+    fetchHimoList();
+
+    // 年選択時の費目リスト再取得
+    yearSelect.on('change', function () {
+        fetchHimoList();
+    });
+
     // LIFF初期化
     const liffId = "2003899256-PBMA9YXX";
     liff.init({ liffId })
@@ -79,22 +104,6 @@ $(function () {
         })
         .catch((err) => {
             console.error("LIFF初期化失敗:", err);
-        });
-
-    // 費目データ取得
-    const url = "https://script.google.com/macros/s/AKfycbzzVKYEbfo3N8IbPviYcK3OGTq3mihLLmL5B-VRGIx7AvAUsfJsd1-YEZFQ1S8MVAuVdw/exec";
-    fetch(url)
-        .then(res => res.json())
-        .then(data => {
-            let options = '';
-            data.forEach(himo => {
-                options += `<option value="${himo}">${himo}</option>`;
-            });
-            options += `<option value="収入">収入</option>`;
-            himoSelect.html(options);
-        })
-        .catch(err => {
-            console.error("費目取得失敗:", err);
         });
 
     // フォーム送信処理
@@ -125,3 +134,4 @@ $(function () {
 
 </body>
 </html>
+
