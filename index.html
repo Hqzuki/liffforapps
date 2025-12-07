@@ -47,7 +47,8 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" crossorigin="anonymous"></script>
 <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
 
-<script>$(function () {
+<script>
+$(function () {
     const yearSelect = $('select[name="year"]');
     const monthSelect = $('select[name="month"]');
     const himoSelect = $('select[name="himo"]');
@@ -55,46 +56,55 @@
     const currentYear = today.getFullYear();
     const currentMonth = today.getMonth() + 1;
 
+    // ===== ここが修正ポイント：次月のデフォルトを安全に決定 =====
+    let defaultYear = currentYear;
+    let defaultMonth = currentMonth + 1;
+    if (currentMonth === 12) {
+        defaultYear = currentYear + 1;
+        defaultMonth = 1;
+    }
+    // =======================================================
+
     // 年の選択肢生成（今年〜5年後）
     let yearOptions = '';
     for (let i = 0; i < 6; i++) {
         const year = currentYear + i;
         yearOptions += `<option value="${year}">${year}年</option>`;
     }
-    yearSelect.html(yearOptions).val(currentYear);
+    yearSelect.html(yearOptions).val(defaultYear);
 
     // 月の選択肢生成
     let monthOptions = '';
     for (let i = 1; i <= 12; i++) {
         monthOptions += `<option value="${i}">${i}月</option>`;
     }
-    monthSelect.html(monthOptions).val(currentMonth + 1);
+    monthSelect.html(monthOptions).val(defaultMonth);
 
-function fetchHimoList(selectedYear) {
-    const url = `https://script.google.com/macros/s/AKfycbygp2IcX51oNyis4juAdHKfuSZOVmfRas_a4fhKnqLqA5O64pBjf_b0dw0c5x4gGjHLig/exec?year=${selectedYear}`;
-    fetch(url)
-        .then(res => res.json())
-        .then(data => {
-            let options = '';
-            data.forEach(himo => {
-                options += `<option value="${himo}">${himo}</option>`;
+    function fetchHimoList(selectedYear) {
+        const url = `https://script.google.com/macros/s/AKfycbygp2IcX51oNyis4juAdHKfuSZOVmfRas_a4fhKnqLqA5O64pBjf_b0dw0c5x4gGjHLig/exec?year=${selectedYear}`;
+        fetch(url)
+            .then(res => res.json())
+            .then(data => {
+                let options = '';
+                data.forEach(himo => {
+                    options += `<option value="${himo}">${himo}</option>`;
+                });
+                options += `<option value="収入">収入</option>`;
+                $('select[name="himo"]').html(options);
+            })
+            .catch(err => {
+                console.error("費目取得失敗:", err);
             });
-            options += `<option value="収入">収入</option>`;
-            $('select[name="himo"]').html(options);
-        })
-        .catch(err => {
-            console.error("費目取得失敗:", err);
-        });
-}
+    }
 
-    // 初回の費目取得
-    fetchHimoList(currentYear);
+    // 初回の費目取得（デフォルト年で）
+    fetchHimoList(defaultYear);
 
     // 年選択時の費目リスト再取得
     yearSelect.on('change', function () {
-    const selectedYear = $(this).val();
-    fetchHimoList(selectedYear);
-});
+        const selectedYear = $(this).val();
+        fetchHimoList(selectedYear);
+    });
 
     // LIFF初期化
     const liffId = "2003899256-PBMA9YXX";
@@ -134,6 +144,3 @@ function fetchHimoList(selectedYear) {
 
 </body>
 </html>
-
-
-
