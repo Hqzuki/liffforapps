@@ -123,7 +123,15 @@ $(function () {
         const himo = himoSelect.val();
         const udetate = $('input[name="udetate"]').val();
         const memo = $('input[name="memo"]').val();
-        const msg = `${year}年${month}月\n${himo}\n${udetate}円\n${memo}`;
+
+        // 基本の3行を組み立て
+        let msg = `${year}年${month}月\n${himo}\n${udetate}円`;
+
+        // メモがあれば改行して追加、なければそのまま
+        if (memo && memo.trim() !== "") {
+            msg += `\n${memo}`;
+        }
+
         sendText(msg);
         return false;
     });
@@ -144,3 +152,4 @@ $(function () {
 
 </body>
 </html>
+
