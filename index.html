@@ -87,7 +87,7 @@ $(function () {
     const CACHE_TTL_MS = 1000 * 60 * 60 * 24; // 24時間
 
     function cacheKey(year) {
-        return `himoList:${year}`;
+        return `himoList:v2:${year}`;
     }
 
     function loadFromLocalStorage(year) {
