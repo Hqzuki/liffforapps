@@ -80,6 +80,40 @@ $(function () {
     }
     monthSelect.html(monthOptions).val(defaultMonth);
 
+    // ============================
+    // ここから：費目リストのキャッシュ（メモリ + localStorage）
+    // ============================
+    const himoCache = {};                 // ページ内キャッシュ
+    const CACHE_TTL_MS = 1000 * 60 * 60 * 24; // 24時間
+
+    function cacheKey(year) {
+        return `himoList:${year}`;
+    }
+
+    function loadFromLocalStorage(year) {
+        try {
+            const raw = localStorage.getItem(cacheKey(year));
+            if (!raw) return null;
+            const obj = JSON.parse(raw);
+            if (!obj || !obj.savedAt || !obj.data) return null;
+            if (Date.now() - obj.savedAt > CACHE_TTL_MS) return null; // 期限切れ
+            return obj.data;
+        } catch (e) {
+            return null;
+        }
+    }
+
+    function saveToLocalStorage(year, data) {
+        try {
+            localStorage.setItem(cacheKey(year), JSON.stringify({
+                savedAt: Date.now(),
+                data: data
+            }));
+        } catch (e) {
+            // 保存できない環境でも落とさない
+        }
+    }
+
     function renderHimoOptions(list) {
         // 文字列連結で一括更新（速い）
         let options = (list || []).map(h => `<option value="${h}">${h}</option>`).join('');
@@ -89,17 +123,38 @@ $(function () {
 
     async function fetchHimoList(selectedYear) {
         const year = String(selectedYear);
-        const url = `https://script.google.com/macros/s/AKfycbzV72cPp7FYeV3plOoXoWcUZMkB1Z8d2dHWzPn3f3B7Z6ua1-WCt-lX1hPsr8temW_7/exec?action=himo&year=${encodeURIComponent(year)}&t=${Date.now()}`;
+
+        // 1) メモリキャッシュ
+        if (himoCache[year]) {
+            renderHimoOptions(himoCache[year]);
+            return;
+        }
+
+        // 2) localStorageキャッシュ
+        const stored = loadFromLocalStorage(year);
+        if (stored) {
+            himoCache[year] = stored;
+            renderHimoOptions(stored);
+            return;
+        }
+
+        // 3) 通信（初回のみ）
+        const url = `https://script.google.com/macros/s/AKfycbyl4sU6dj9qwJipHN34mB8-anLGRoEJDqHKuBnMtLtPCL4Ti9mPAJ2hgIDaMwGiJxgZsg/exec?year=${encodeURIComponent(year)}`;
 
         try {
-            const res = await fetch(url, { cache: "no-store" });
+            const res = await fetch(url, { cache: "force-cache" });
             const data = await res.json();
 
+            himoCache[year] = data;
+            saveToLocalStorage(year, data);
             renderHimoOptions(data);
         } catch (err) {
             console.error("費目取得失敗:", err);
         }
     }
+    // ============================
+    // ここまで：費目リストのキャッシュ
+    // ============================
 
     // 初回の費目取得（デフォルト年で）
     fetchHimoList(defaultYear);
