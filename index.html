@@ -84,10 +84,11 @@ $(function () {
     // ここから：費目リストのキャッシュ（メモリ + localStorage）
     // ============================
     const himoCache = {};                 // ページ内キャッシュ
-    const CACHE_TTL_MS = 1000 * 60 * 60 * 24; // 24時間
+    const CACHE_TTL_MS = 1000 * 60 * 60; // 1時間
+    const CACHE_VERSION = "v2";
 
     function cacheKey(year) {
-        return `himoList:v2:${year}`;
+        return `himoList:${CACHE_VERSION}:${year}`;
     }
 
     function loadFromLocalStorage(year) {
@@ -139,10 +140,10 @@ $(function () {
         }
 
         // 3) 通信（初回のみ）
-        const url = `https://script.google.com/macros/s/AKfycbyl4sU6dj9qwJipHN34mB8-anLGRoEJDqHKuBnMtLtPCL4Ti9mPAJ2hgIDaMwGiJxgZsg/exec?year=${encodeURIComponent(year)}`;
+        const url = `https://script.google.com/macros/s/AKfycbyl4sU6dj9qwJipHN34mB8-anLGRoEJDqHKuBnMtLtPCL4Ti9mPAJ2hgIDaMwGiJxgZsg/exec?action=himo&year=${encodeURIComponent(year)}`;
 
         try {
-            const res = await fetch(url, { cache: "force-cache" });
+            const res = await fetch(url, { cache: "no-store" });
             const data = await res.json();
 
             himoCache[year] = data;
@@ -211,4 +212,3 @@ $(function () {
 
 </body>
 </html>
-
