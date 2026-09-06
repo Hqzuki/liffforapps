@@ -139,7 +139,7 @@ $(function () {
         }
 
         // 3) 通信（初回のみ）
-        const url = `https://script.google.com/macros/s/AKfycbzSD4-VWAi_MtFvH99moOjwdRy8mSwBr7gqe6CRuw-3wmlRxchgXhaAZsl2FB0vhWg/exec?action=himo&year=${encodeURIComponent(year)}`;
+        const url = `https://script.google.com/macros/s/AKfycbw8PnOqQBBjbmYfbQ5bt3Fe8d-2fhWk_vE2NsULI1XLTCDcpI07-r7mBFAR3yaogBL1WQ/exec?action=himo&year=${encodeURIComponent(year)}`;
 
         try {
             const res = await fetch(url, { cache: "force-cache" });
