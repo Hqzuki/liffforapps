@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "checkJs": false,
+    "types": [
+      "google-apps-script"
+    ]
+  },
+  "include": [
+    "src/**/*.js",
+    "src/**/*.gs"
+  ]
+}

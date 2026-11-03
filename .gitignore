@@ -1,0 +1,16 @@
+node_modules/
+.clasprc.json
+.clasprc*.json
+.clasp.json
+.env
+.env.*
+!.env.example
+.DS_Store
+
+# ローカルの調査・移行用スクリプト
+/check-url.cjs
+/cleanup-deployments.cjs
+/diagnose-registration.cjs
+/inspect-api.cjs
+/update-webhook-deployment.cjs
+/verify-deployment.cjs
