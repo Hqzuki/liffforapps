@@ -1,4 +1,4 @@
-# 個人用家計簿
+# 個人家計簿
 
 LIFF画面とGoogle Apps Script（GAS）を同じリポジトリで管理します。
 

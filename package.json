@@ -4,7 +4,7 @@
     "@types/google-apps-script": "^2.0.14",
     "prettier": "3.6.2"
   },
-  "name": "gas-workspace",
+  "name": "kakeibo-personal",
   "private": true,
   "scripts": {
     "login": "clasp --auth .clasprc.json login",
