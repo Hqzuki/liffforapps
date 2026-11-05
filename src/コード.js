@@ -459,7 +459,9 @@ function recordFundNightly() {
   recordFundDaily();
 }
 function FUND_scheduleNextNight_() {
-  const lock = LockService.getScriptLock();
+  // トリガーは作成者ごとに管理されるため、予約だけをユーザーロックで保護する。
+  // シートの並べ替えが長引いても、翌日の予約を妨げない。
+  const lock = LockService.getUserLock();
   lock.waitLock(30000);
   try {
     const now = new Date();
@@ -481,7 +483,8 @@ function FUND_scheduleNextNight_() {
 
 function recordFundDaily() {
   const lock = LockService.getScriptLock();
-  lock.waitLock(30000);
+  // 並べ替えとシート書き込みの排他は維持し、長い並べ替えの終了を待つ。
+  lock.waitLock(2 * 60 * 1000);
   try {
     FUND_validateFunds_();
     const ss = FUND_spreadsheet_(), now = new Date(), today = FUND_dateKey_(now);
